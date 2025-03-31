@@ -26,7 +26,6 @@ export function createElement(vNode) {
 
   const $el = document.createElement(type);
   if (props) {
-    console.log(props);
     Object.entries(props).forEach(([name, value]) => {
       if (name.toLowerCase() === "classname") {
         return $el.setAttribute("class", value);
