@@ -1,28 +1,34 @@
-import { addEvent, removeEvent, setupEventListeners } from "./eventManager";
+import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
 
-function updateAttributes(target, originNewProps = {}, originOldProps = {}) {
-  // newProps 반영
-  for (const [key, value] of Object.entries(originNewProps || {})) {
-    if (originOldProps[key] === originNewProps[key]) continue;
-    if (key.startsWith("on") && typeof value === "function") {
-      return addEvent(target, key.replace("on", "").toLowerCase(), value);
+function updateAttributes(target, newProps, oldProps) {
+  // 달라지거나 추가된 Props를 반영
+  for (const [attr, value] of Object.entries(newProps)) {
+    if (oldProps[attr] === value) continue;
+
+    if (attr.startsWith("on")) {
+      return addEvent(target, attr.replace("on", "").toLowerCase(), value);
     }
-    if (key.startsWith("class") && typeof value === "string") {
+
+    if (attr.startsWith("class") && typeof value === "string") {
       return target.setAttribute("class", value);
     }
-    target.setAttribute(key, value);
+
+    target.setAttribute(attr, value);
   }
 
-  // oldProps에만 남은 속성 제거
-  for (const key of Object.keys(originOldProps || {})) {
-    if (originNewProps[key] !== undefined) continue;
-    removeEvent(
-      target,
-      key.replace("on", "").toLowerCase(),
-      originOldProps[key],
-    );
-    target.removeAttribute(key);
+  // 없어진 props를 attribute에서 제거
+  for (const attr of Object.keys(oldProps)) {
+    if (newProps[attr] !== undefined) continue;
+    if (attr.startsWith("on")) {
+      return removeEvent(
+        target,
+        attr.replace("on", "").toLowerCase(),
+        oldProps[attr],
+      );
+    }
+
+    target.removeAttribute(attr);
   }
 }
 
@@ -33,16 +39,15 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
 
   // oldNode
   if (!newNode && oldNode) {
-    parentElement.removeChild(parentElement.children[index]);
-    return removeEvent(oldNode, "click", oldNode.props.onClick);
+    return parentElement.removeChild(parentElement.childNodes[index]);
   }
+
   // newNode
   if (newNode && !oldNode) {
     const $el = createElement(newNode);
-    parentElement.appendChild($el);
-    setupEventListeners(parentElement);
-    return;
+    return parentElement.appendChild($el);
   }
+
   // 모두 text 타입
   if (typeof newNode === "string" && typeof oldNode === "string") {
     if (newNode === oldNode) {
@@ -50,7 +55,7 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     }
     return parentElement.replaceChild(
       createElement(newNode),
-      parentElement.children[index],
+      parentElement.childNodes[index],
     );
   }
 
@@ -58,17 +63,22 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
   if (newNode.type !== oldNode.type) {
     return parentElement.replaceChild(
       createElement(newNode),
-      parentElement.children[index],
+      parentElement.childNodes[index],
     );
   }
   // 태그이름이 같을 경우
-  updateAttributes(parentElement.children[index], newNode.props, oldNode.props);
+  updateAttributes(
+    parentElement.childNodes[index],
+    newNode.props || {},
+    oldNode.props || {},
+  );
 
   // 반복
   const maxLength = Math.max(newNode.children.length, oldNode.children.length);
+
   for (let i = 0; i < maxLength; i++) {
     updateElement(
-      parentElement.children[i],
+      parentElement.childNodes[index], // 헉..
       newNode.children[i],
       oldNode.children[i],
       i,
