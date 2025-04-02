@@ -15,7 +15,26 @@ export const Post = ({
 
   const handleLike = () => {
     if (!loggedIn) return alert("로그인 후 이용해주세요");
-    console.log(id);
+
+    const updatePost = posts.filter((post) => post.id === id)[0];
+    const likeIndex = updatePost.likeUsers.indexOf(currentUser.username);
+
+    // 좋아요
+    if (likeIndex === -1) {
+      updatePost.likeUsers.push(currentUser.username);
+    }
+
+    // 좋아요 취소
+    if (likeIndex !== -1) {
+      updatePost.likeUsers.splice(likeIndex, 1);
+    }
+
+    posts[id - 1] = updatePost;
+    globalStore.setState({ posts });
+
+    document.querySelector(".like-button").classList.toggle("text-blue-500");
+    document.querySelector(".like-button").textContent =
+      `좋아요 ${updatePost.likeUsers.length}`;
   };
 
   return (
@@ -28,10 +47,7 @@ export const Post = ({
       </div>
       <p>{content}</p>
       <div className="mt-2 flex justify-between text-gray-500">
-        <span
-          onClick={handleLike}
-          className={`like-button cursor-pointer${activationLike ? " text-blue-500" : ""}`}
-        >
+        <span onClick={handleLike} className="like-button cursor-pointer">
           좋아요 {likeUsers.length}
         </span>
         <span>댓글</span>
