@@ -1,31 +1,31 @@
-const eventHandlers = new Map();
+const eventHandler = {};
 
 export function setupEventListeners(root) {
   if (!root) {
     return;
   }
 
-  Object.keys(eventHandlers).forEach((eventType) => {
-    root.addEventListener(eventType, (e) => handleEvent(e));
+  Object.keys(eventHandler).forEach((eventType) => {
+    root.addEventListener(eventType, handleEvent);
   });
 }
 
 function handleEvent(event) {
   const { type, target } = event;
-  if (eventHandlers[type] && eventHandlers[type][target]) {
-    eventHandlers[type][target]();
+  if (eventHandler[type] && eventHandler[type][target]) {
+    eventHandler[type][target](event);
   }
 }
 
 export function addEvent(element, eventType, handler) {
-  if (!eventHandlers[eventType]) {
-    eventHandlers[eventType] = {};
+  if (!eventHandler[eventType]) {
+    eventHandler[eventType] = {};
   }
-  eventHandlers[eventType][element] = handler;
+  eventHandler[eventType][element] = handler;
 }
 
 export function removeEvent(element, eventType, handler) {
-  if (eventHandlers[eventType][element] === handler) {
-    delete eventHandlers[eventType][element];
+  if (eventHandler[eventType][element] === handler) {
+    delete eventHandler[eventType][element];
   }
 }
