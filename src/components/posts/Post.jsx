@@ -31,10 +31,6 @@ export const Post = ({
 
     posts[id - 1] = updatePost;
     globalStore.setState({ posts });
-
-    document.querySelector(".like-button").classList.toggle("text-blue-500");
-    document.querySelector(".like-button").textContent =
-      `좋아요 ${updatePost.likeUsers.length}`;
   };
 
   return (
@@ -47,7 +43,10 @@ export const Post = ({
       </div>
       <p>{content}</p>
       <div className="mt-2 flex justify-between text-gray-500">
-        <span onClick={handleLike} className="like-button cursor-pointer">
+        <span
+          onClick={handleLike}
+          className={`like-button cursor-pointer${activationLike ? " text-blue-500" : ""}`}
+        >
           좋아요 {likeUsers.length}
         </span>
         <span>댓글</span>

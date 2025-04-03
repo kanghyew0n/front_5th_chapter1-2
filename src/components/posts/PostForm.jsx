@@ -8,7 +8,7 @@ export const PostForm = () => {
     const content = document.querySelector("#post-content").value;
 
     const newPost = {
-      id: 1,
+      id: posts.length + 1,
       author: currentUser.username,
       time: Date.now(),
       content: content,
