@@ -7,11 +7,12 @@ function updateAttributes(target, newProps, oldProps) {
     if (oldProps[attr] === value) continue;
 
     if (attr.startsWith("on")) {
-      return addEvent(target, attr.replace("on", "").toLowerCase(), value);
+      addEvent(target, attr.replace("on", "").toLowerCase(), value);
+      continue;
     }
-
     if (attr.startsWith("class") && typeof value === "string") {
-      return target.setAttribute("class", value);
+      target.setAttribute("class", value);
+      continue;
     }
 
     target.setAttribute(attr, value);
@@ -21,11 +22,8 @@ function updateAttributes(target, newProps, oldProps) {
   for (const attr of Object.keys(oldProps)) {
     if (newProps[attr] !== undefined) continue;
     if (attr.startsWith("on")) {
-      return removeEvent(
-        target,
-        attr.replace("on", "").toLowerCase(),
-        oldProps[attr],
-      );
+      removeEvent(target, attr.replace("on", "").toLowerCase(), oldProps[attr]);
+      continue;
     }
 
     target.removeAttribute(attr);
