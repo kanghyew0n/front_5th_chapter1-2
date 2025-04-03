@@ -1,15 +1,11 @@
-import { attributeRules } from "./utils";
+import { attributeRules, FALSY_VALUES, PRIMITIVE_TYPES } from "./utils";
 
 export function createElement(vNode) {
-  if (
-    vNode === null ||
-    typeof vNode === "undefined" ||
-    typeof vNode === "boolean"
-  ) {
+  if (FALSY_VALUES.includes(vNode)) {
     return document.createTextNode("");
   }
 
-  if (typeof vNode === "string" || typeof vNode === "number") {
+  if (PRIMITIVE_TYPES.includes(typeof vNode)) {
     return document.createTextNode(vNode);
   }
 
@@ -21,7 +17,6 @@ export function createElement(vNode) {
   }
 
   const { type, props, children } = vNode;
-
   const $el = document.createElement(type);
 
   updateAttributes($el, props);

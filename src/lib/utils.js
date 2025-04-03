@@ -1,5 +1,8 @@
 import { addEvent, removeEvent } from "./eventManager";
 
+export const FALSY_VALUES = [null, undefined, true, false];
+export const PRIMITIVE_TYPES = ["string", "number"];
+
 const normalizeEventName = (name) => name.replace(/^on/, "").toLowerCase();
 
 export const attributeRules = {

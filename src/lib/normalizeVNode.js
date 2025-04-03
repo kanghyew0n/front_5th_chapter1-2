@@ -1,8 +1,10 @@
+import { FALSY_VALUES, PRIMITIVE_TYPES } from "./utils";
+
 export function normalizeVNode(vNode) {
-  if (vNode === null || vNode === undefined || typeof vNode === "boolean") {
+  if (FALSY_VALUES.includes(vNode)) {
     return "";
   }
-  if (typeof vNode === "string" || typeof vNode === "number") {
+  if (PRIMITIVE_TYPES.includes(typeof vNode)) {
     return `${vNode}`;
   }
 
@@ -15,8 +17,6 @@ export function normalizeVNode(vNode) {
 
   return {
     ...vNode,
-    children: vNode.children
-      ?.map(normalizeVNode)
-      .filter((child) => Boolean(child)),
+    children: vNode.children?.map(normalizeVNode).filter(Boolean),
   };
 }
