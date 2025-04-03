@@ -1,4 +1,4 @@
-import { addEvent } from "./eventManager";
+import { attributeRules } from "./utils";
 
 export function createElement(vNode) {
   if (
@@ -32,11 +32,10 @@ export function createElement(vNode) {
 
 function updateAttributes($el, props) {
   Object.entries(props || {}).forEach(([key, value]) => {
-    if (key.startsWith("on") && typeof value === "function") {
-      return addEvent($el, key.replace("on", "").toLowerCase(), value);
-    }
-    if (key.startsWith("class") && typeof value === "string") {
-      return $el.setAttribute("class", value);
+    for (const rule of Object.values(attributeRules)) {
+      if (rule.condition(key, value)) {
+        return rule.apply($el, key, value);
+      }
     }
     $el.setAttribute(key, value);
   });

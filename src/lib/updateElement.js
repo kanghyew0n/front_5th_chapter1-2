@@ -1,17 +1,17 @@
-import { addEvent, removeEvent } from "./eventManager";
 import { createElement } from "./createElement.js";
+import { attributeRules } from "./utils.js";
 
 function updateAttributes(target, newProps, oldProps) {
   // 달라지거나 추가된 Props를 반영
   for (const [attr, value] of Object.entries(newProps)) {
     if (oldProps[attr] === value) continue;
 
-    if (attr.startsWith("on")) {
-      addEvent(target, attr.replace("on", "").toLowerCase(), value);
+    if (attributeRules.event.condition(attr, value)) {
+      attributeRules.event.apply(target, attr, value);
       continue;
     }
-    if (attr.startsWith("class") && typeof value === "string") {
-      target.setAttribute("class", value);
+    if (attributeRules.class.condition(attr, value)) {
+      attributeRules.class.apply(target, attr, value);
       continue;
     }
 
@@ -19,10 +19,10 @@ function updateAttributes(target, newProps, oldProps) {
   }
 
   // 없어진 props를 attribute에서 제거
-  for (const attr of Object.keys(oldProps)) {
+  for (const [attr, value] of Object.entries(oldProps)) {
     if (newProps[attr] !== undefined) continue;
-    if (attr.startsWith("on")) {
-      removeEvent(target, attr.replace("on", "").toLowerCase(), oldProps[attr]);
+    if (attributeRules.event.condition(attr, value)) {
+      attributeRules.event.remove(target, attr, value);
       continue;
     }
 
