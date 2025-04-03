@@ -4,6 +4,7 @@ import { globalStore } from "../../stores";
 
 export const PostForm = () => {
   const { currentUser, posts } = globalStore.getState();
+
   const handleSubmit = () => {
     const content = document.querySelector("#post-content").value;
 

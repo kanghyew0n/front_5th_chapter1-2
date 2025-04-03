@@ -15,10 +15,8 @@ export function createElement(vNode) {
 
   if (Array.isArray(vNode)) {
     const $fragment = document.createDocumentFragment();
-    vNode.forEach((child) => {
-      const $child = createElement(child);
-      $fragment.appendChild($child);
-    });
+    $fragment.append(...vNode.map(createElement));
+
     return $fragment;
   }
 
@@ -27,11 +25,7 @@ export function createElement(vNode) {
   const $el = document.createElement(type);
 
   updateAttributes($el, props);
-
-  children.forEach((child) => {
-    const $child = createElement(child);
-    $el.appendChild($child);
-  });
+  $el.append(...children.map(createElement));
 
   return $el;
 }

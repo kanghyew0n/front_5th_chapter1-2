@@ -25,14 +25,8 @@ export const HomePage = () => {
             {[...posts]
               .sort((a, b) => b.time - a.time)
               .map((props) => {
-                return (
-                  <Post
-                    {...props}
-                    activationLike={props.likeUsers.includes(
-                      currentUser.username,
-                    )}
-                  />
-                );
+                const isLiked = props.likeUsers.includes(currentUser?.username);
+                return <Post {...props} activationLike={isLiked} />;
               })}
           </div>
         </main>

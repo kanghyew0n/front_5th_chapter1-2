@@ -2,6 +2,7 @@
 import { createVNode } from "../../lib";
 import { globalStore } from "../../stores/globalStore.js";
 import { toTimeFormat } from "../../utils/index.js";
+import { checkLoggedIn } from "../../utils/userUtils.js";
 
 export const Post = ({
   id,
@@ -14,18 +15,17 @@ export const Post = ({
   const { currentUser, loggedIn, posts } = globalStore.getState();
 
   const handleLike = () => {
-    if (!loggedIn) return alert("로그인 후 이용해주세요");
+    if (!checkLoggedIn(loggedIn)) return;
 
     const updatePost = posts.filter((post) => post.id === id)[0];
-    const likeIndex = updatePost.likeUsers.indexOf(currentUser.username);
+    const likeIndex = updatePost?.likeUsers.indexOf(currentUser.username);
+    const hasLiked = likeIndex === -1;
 
-    // 좋아요
-    if (likeIndex === -1) {
+    if (hasLiked) {
       updatePost.likeUsers.push(currentUser.username);
     }
 
-    // 좋아요 취소
-    if (likeIndex !== -1) {
+    if (!hasLiked) {
       updatePost.likeUsers.splice(likeIndex, 1);
     }
 
