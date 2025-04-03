@@ -16,8 +16,6 @@ function handleEvent(event) {
 
   for (const [element, handler] of eventHandler[type].entries()) {
     if (element === target || element.contains(target)) {
-      event.stopPropagation();
-      event.preventDefault();
       handler(event);
       break;
     }
