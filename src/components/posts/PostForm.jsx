@@ -6,17 +6,18 @@ export const PostForm = () => {
   const { currentUser, posts } = globalStore.getState();
 
   const handleSubmit = () => {
-    const content = document.querySelector("#post-content").value;
+    const textArea = document.querySelector("#post-content");
 
     const newPost = {
       id: posts.length + 1,
       author: currentUser.username,
       time: Date.now(),
-      content: content,
+      content: textArea.value,
       likeUsers: [],
     };
 
     globalStore.setState({ posts: [...posts, newPost] });
+    textArea.value = "";
   };
 
   return (
