@@ -35,19 +35,21 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     return;
   }
 
-  // oldNode
-  if (!newNode && oldNode) {
+  const isOnlyOldNode = !newNode && oldNode;
+  const isOnlyNewNode = newNode && !oldNode;
+  const isBothText = typeof newNode === "string" && typeof oldNode === "string";
+  const isDifferentTag = newNode?.type !== oldNode?.type;
+
+  if (isOnlyOldNode) {
     return parentElement.removeChild(parentElement.childNodes[index]);
   }
 
-  // newNode
-  if (newNode && !oldNode) {
+  if (isOnlyNewNode) {
     const $el = createElement(newNode);
     return parentElement.appendChild($el);
   }
 
-  // 모두 text 타입
-  if (typeof newNode === "string" && typeof oldNode === "string") {
+  if (isBothText) {
     if (newNode === oldNode) {
       return;
     }
@@ -57,13 +59,13 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     );
   }
 
-  // 태그이름만 다를 경우
-  if (newNode.type !== oldNode.type) {
+  if (isDifferentTag) {
     return parentElement.replaceChild(
       createElement(newNode),
       parentElement.childNodes[index],
     );
   }
+
   // 태그이름이 같을 경우
   updateAttributes(
     parentElement.childNodes[index],
@@ -71,12 +73,11 @@ export function updateElement(parentElement, newNode, oldNode, index = 0) {
     oldNode.props || {},
   );
 
-  // 반복
   const maxLength = Math.max(newNode.children.length, oldNode.children.length);
 
   for (let i = 0; i < maxLength; i++) {
     updateElement(
-      parentElement.childNodes[index], // 헉..
+      parentElement.childNodes[index],
       newNode.children[i],
       oldNode.children[i],
       i,
